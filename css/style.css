@@ -1,0 +1,64 @@
+.btn-roxo {
+    background-color: #6f42c1 !important;
+    color: white !important;
+    border: none !important;
+    transition: all 0.3s ease-in-out !important;
+    border-radius: 5px !important;
+    padding: 0.4rem;
+}
+
+.btn-roxo:hover {
+    background-color: #5a32a3 !important;
+    color: white !important;
+    transform: scale(1.05) !important;
+}
+
+.inputsNotas {
+
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+.inputsNotas:hover {
+    border: 1px solid #6f42c1;
+}
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background-color: white;
+    border-bottom: 3px solid var(--roxo);
+}
+
+/* Estilo do Botão Flutuante */
+.btn-flutuante {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background-color: var(--roxo);
+    color: white;
+    border: none;
+    font-size: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* Estilo dos Cards das Notas */
+.nota-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    background-color: white;
+}
+
+.card-title {
+    color: var(--roxo);
+    font-weight: bold;
+}

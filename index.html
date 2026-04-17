@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <button  id="btn-abrir" class="btn btn-lg position-fixed bottom-0 end-0 m-3 btn-roxo">
+    <button id="btn-abrir" class="btn btn-lg position-fixed bottom-0 end-0 m-3 btn-roxo">
         +
     </button>
 
@@ -38,17 +38,20 @@
                 </div>
                 <div class="modal-body">
                     <p><strong>Título</strong> </p>
-                    <input class="inputsNotas" type="text" placeholder="Digite o título da nota...">
-                    
+                    <input id="inputTitulo" class="inputsNotas" type="text" placeholder="Digite o título da nota...">
+                    <span style="color: red;" id="erroTitulo"></span>
+
                     <div style="margin-top: 3rem;">
                         <p><strong>Conteúdo</strong></p>
-                        <textarea class="inputsNotas" placeholder="Digite o conteúdo da nota..."></textarea>
+                        <textarea id="inputConteudo" class="inputsNotas"
+                            placeholder="Digite o conteúdo da nota..."></textarea>
+                        <span style="color: red;" id="erroConteudo"></span>
 
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button class="btn-roxo" type="button" class="btn btn-primary">Salvar Nota</button>
+                    <button id="btn-salvar" type="button" class="btn btn-primary btn-roxo">Salvar Nota</button>
                 </div>
             </div>
         </div>

@@ -6,12 +6,28 @@
     border-radius: 5px !important;
     padding: 0.4rem;
 }
-
 .btn-roxo:hover {
     background-color: #5a32a3 !important;
     color: white !important;
     transform: scale(1.05) !important;
 }
+
+.btn-vermelho {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border: none !important;
+    transition: all 0.3s ease-in-out !important;
+    border-radius: 5px !important;
+    padding: 0.4rem;
+}
+
+.btn-vermelho:hover {
+    background-color: #c82333 !important;
+    color: white !important;
+    transform: scale(1.05) !important;
+}
+
+
 
 .inputsNotas {
 
@@ -50,6 +66,10 @@ body {
     z-index: 1000;
 }
 
+.border-roxo {
+    border: 0.2rem solid #6f42c1  !important;
+}
+
 /* Estilo dos Cards das Notas */
 .nota-card {
     border: none;
@@ -61,4 +81,9 @@ body {
 .card-title {
     color: var(--roxo);
     font-weight: bold;
+}
+
+.btn-editar {
+   
+    background-color: purple !important;
 }

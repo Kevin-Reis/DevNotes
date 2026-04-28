@@ -1,4 +1,4 @@
-
+let minhasNotas = carregarNotas()
 let aparecerModal = new bootstrap.Modal(document.getElementById('blocoNotas')); //varaivel que guarda a minha modal
 
 let btnModal = document.getElementById('btn-abrir');
@@ -12,7 +12,7 @@ let erroTitulo = document.getElementById('erroTitulo');
 let erroConteudo = document.getElementById('erroConteudo');
 
 let notaEditandoId = null; //variavel para guardar o id da nota para saber qual nota esta sendo editada, inicialmente é null porque não estamos editando nenhuma nota.
-
+let inputBusca = document.getElementById('inputBusca')
 //Variaveis que guardam Elementos HTML pelo seu ID para serem usados depois
 
 
@@ -36,36 +36,36 @@ function carregarNotas() {
 
 function excluirNota(id) {
     let notas = carregarNotas(); //guarda as notas salvas  no localStorage na variavel "notas"
-    
+
     notas = notas.filter((nota) => nota.id !== id);// mantem a nota se o id dela for diferente do id recebido pelo parametro, ou seja se o id recebido do parametro for igual ao id da nota botao do excluir ele vai excluir a nota do array
-    
+
     salvarNotas(notas); //salva o array atualizado
-    
+
     renderizarNotas(); // renderiza as notas atualizadas na tela, ou seja sem a nota que foi excluida.
 }
 
 
 function validar() {
-    
+
     erroTitulo.textContent = "";
     erroConteudo.textContent = ""; // limpa as mensagens de erro antes de validar novamente
-    
-    
+
+
     if (titulo.value == "") {
         erroTitulo.textContent = "Preencha o campo título";
         return
     }
-    
+
     if (conteudo.value == "") {
         erroConteudo.textContent = "Preencha o campo conteúdo";
         return
     }
-    
-    
-    
+
+
+
     if (notaEditandoId) { //se a variavel "notaEditandoId" tiver um valor, ou seja se estivermos editando uma nota
         let notas = carregarNotas(); //chama a funcao carregarNotas para pegar as notas salvas no localStorage e guarda na variavel "notas"
-        
+
         notas = notas.map((nota) => { //percorre o array de notas e para cada nota verifica se o id dela é igual ao id da nota que estamos editando, que esta guardado na variavel "notaEditandoId"
             if (nota.id === notaEditandoId) {
                 return { id: nota.id, titulo: titulo.value, conteudo: conteudo.value }; //se for igual retorna um novo objeto com o mesmo id e os novos valores de titulo e conteudo
@@ -80,7 +80,7 @@ function validar() {
         notas.push(novaNota); //adiciona a nova nota ao array de notas
         salvarNotas(notas); //salva o array atualizado no localStorage
     }
-    
+
     renderizarNotas(); //renderiza as notas atualizadas na tela, ou seja com a nova nota adicionada ou com a nota editada
     aparecerModal.hide(); //fecha o modal depois de salvar a nota
     titulo.value = ""; //limpa o campo titulo depois de salvar a nota
@@ -94,22 +94,36 @@ function editarNota(id) {// o id que chegou no parametro e o id do botao de edit
 
     let notas = carregarNotas(); //carrega as notas salvas no localStorage e guarda na variavel "notas"
     let nota = notas.find((n) => n.id === id); //procura no array de notas a nota que tem o id igual ao id recebido pelo parametro, e guarda essa nota na variavel "nota", exemplo se o usuario clicou na nota que tem o id = 2 ele vai procurar no array de notas a nota que tem o id = 2 e guarda essa nota na variavel "nota"
-    
+
     titulo.value = nota.titulo; //preenche o campo titulo do modal com o titulo da nota que queremos editar
     conteudo.value = nota.conteudo; //preenche o campo conteudo do modal com o conteudo da nota que queremos editar
-    
+
     notaEditandoId = id; //guarda o id da nota que estamos editando na variavel "notaEditandoId" para saber qual nota esta sendo editada
-    
+
     aparecerModal.show(); //abre o modal para editar a nota
-    
+
 }
 
-function renderizarNotas() {
+function renderizarNotas(listaParaExibir = carregarNotas()) { // todas as minhas notas vao ser gurdadas no meu parametro "listaParaExibir"
+    let contador = document.getElementById('contador-notas')
+    let lista = document.getElementById('lista-notas')
     let notas = carregarNotas();
+
+    if(contador){
+        contador.textContent = listaParaExibir.length; //contador de notas, o length conta quantas notas tem no meu array, o textContent apaga oq e o padrao e reescreve o novo, no caso escreve quantas notas foram encontradas
+    }
+
+    if(listaParaExibir.length === 0){
+        contador.style.color = '#FF0000';
+        
+    }else{
+        contador.style.color = '#FF0000';
+        contador.style.color = '#6f42c1';
+    }//style.color ele usado para colcoar um codigo de cor direto no javaScript.
 
     lista.innerHTML = ''; //limpa todos os card da tela anes de renderizar os novos para evita duplicacao toda vez q a funcao for chamada.
 
-    notas.forEach((nota) => { //percorre o meu array "notas" e tudo oque ele percorre guarda no parametro "nota"
+    listaParaExibir.forEach((nota) => { //percorre o meu parametro "listaParaExibir" e exibe meus objetos q se denominam como nota"
         let card = `<div class="col-md-4">
                 <div class="card shadow-sm border-roxo">
                     <div class="card-body">
@@ -121,7 +135,11 @@ function renderizarNotas() {
                 </div>
             </div>`;
         lista.innerHTML += card; //adiciona mais um igual ao que ja existe na lista, sem apagar o outro que ja estava la
-    })
+    });
+
+    if (listaParaExibir.length === 0) { // conta quantos itens tem dentro do array se for 0 mostra a mensagem que esta abaixo
+        lista.innerHTML = '   <p class="text-center text-muted mt-5">Nenhuma nota encontrada...</p>';
+    }
 
 
     document.querySelectorAll('[data-id]').forEach((btn) => { // pega todos os elemtnos hmtl que tem o atributo "data-id", que neste caso sera o botao de excluir de cada card, percorre cada atributo "data-id" 
@@ -134,6 +152,21 @@ function renderizarNotas() {
         btn.addEventListener('click', () => { editarNota(btn.dataset.editar) });
     });
 }
+
+
+inputBusca.addEventListener('input', () => {
+    let termo = inputBusca.value.toLowerCase();
+    let notasAtuais = carregarNotas(); 
+
+    let notasFiltradas = notasAtuais.filter(item => {
+        // Usei "item" aqui para não confundir com outras variáveis
+        return item.titulo.toLowerCase().includes(termo) || item.conteudo.toLowerCase().includes(termo); // me returna a pesquisa com o que esta escrito no titulo da nota ou o conteudo da nota, ele pergunta, o seu titulo tem incluso nele oq o usuario(termo) digitou.
+    });
+
+    renderizarNotas(notasFiltradas);
+});
+
+
 
 btnSalvar.addEventListener('click', validar);
 

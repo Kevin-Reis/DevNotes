@@ -13,6 +13,9 @@ let erroConteudo = document.getElementById('erroConteudo');
 
 let notaEditandoId = null; //variavel para guardar o id da nota para saber qual nota esta sendo editada, inicialmente é null porque não estamos editando nenhuma nota.
 let inputBusca = document.getElementById('inputBusca')
+
+let idParaExcluir = null //variavel para guardar o id da nota que queremos excluir, inicialmente é null porque não estamos excluindo nenhuma nota.
+
 //Variaveis que guardam Elementos HTML pelo seu ID para serem usados depois
 
 
@@ -31,18 +34,14 @@ function carregarNotas() {
 
 
 
+function ModalExcluir(id){
+    idParaExcluir = id; //guarda o id da nota que queremos excluir na variavel "idParaExcluir" para saber qual nota esta sendo excluida
+    let meuModal = new bootstrap.Modal(document.getElementById('modalConfirmacao')); 
 
-
-
-function excluirNota(id) {
-    let notas = carregarNotas(); //guarda as notas salvas  no localStorage na variavel "notas"
-
-    notas = notas.filter((nota) => nota.id !== id);// mantem a nota se o id dela for diferente do id recebido pelo parametro, ou seja se o id recebido do parametro for igual ao id da nota botao do excluir ele vai excluir a nota do array
-
-    salvarNotas(notas); //salva o array atualizado
-
-    renderizarNotas(); // renderiza as notas atualizadas na tela, ou seja sem a nota que foi excluida.
+    meuModal.show()
 }
+
+
 
 
 function validar() {
@@ -68,14 +67,18 @@ function validar() {
 
         notas = notas.map((nota) => { //percorre o array de notas e para cada nota verifica se o id dela é igual ao id da nota que estamos editando, que esta guardado na variavel "notaEditandoId"
             if (nota.id === notaEditandoId) {
-                return { id: nota.id, titulo: titulo.value, conteudo: conteudo.value }; //se for igual retorna um novo objeto com o mesmo id e os novos valores de titulo e conteudo
+                return { id: nota.id, titulo: titulo.value, conteudo: conteudo.value}; //se for igual retorna um novo objeto com o mesmo id e os novos valores de titulo e conteudo
             }
             return nota; //se não for igual retorna a nota sem alterações
         });
         salvarNotas(notas); //salva o array atualizado no localStorage
         notaEditandoId = null; //reseta a variavel "notaEditandoId" para null, para indicar que não estamos mais editando nenhuma nota
     } else {
-        let novaNota = { id: Date.now().toString(), titulo: titulo.value, conteudo: conteudo.value }//cria um novo objeto novaNota com um id unico e os valores de titulo e conteudo do modal
+        let agora = new Date(); //cria um objeto Date com a data e hora atual
+        let dataFormada = agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); //formata a data para o formato brasileiro e adiciona a hora formatada
+
+
+        let novaNota = { id: Date.now().toString(), titulo: titulo.value, conteudo: conteudo.value, data: dataFormada }//cria um novo objeto novaNota com um id unico e os valores de titulo e conteudo do modal
         let notas = carregarNotas();
         notas.push(novaNota); //adiciona a nova nota ao array de notas
         salvarNotas(notas); //salva o array atualizado no localStorage
@@ -128,9 +131,12 @@ function renderizarNotas(listaParaExibir = carregarNotas()) { // todas as minhas
                 <div class="card shadow-sm border-roxo">
                     <div class="card-body">
                         <h5 style="color: #6f42c1 !important; " class="card-title text-primary">${nota.titulo}</h5> <!--esta acesando os dados do meu array "notas" usando o parametro "nota".-->
+                        
+                        <p class="text-muted small">${nota.data || 'Data não disponível'}</p>
+
                         <p class="card-text">${nota.conteudo}</p>
-                        <button class="btn btn-sm btn-outline-danger btn-vermelho" data-id="${nota.id}">Excluir</button>
-                        <button class="btn btn-sm btn-outline-danger btn-roxo" data-editar="${nota.id}">Editar</button>
+                        <button class="btn btn-sm btn-outline-danger btn-vermelho" onclick="ModalExcluir('${nota.id}')">Excluir</button>
+                        <button class="btn btn-sm btn-outline-danger btn-roxo" onclick="editarNota('${nota.id}')">Editar</button>
                     </div>
                 </div>
             </div>`;
@@ -140,17 +146,6 @@ function renderizarNotas(listaParaExibir = carregarNotas()) { // todas as minhas
     if (listaParaExibir.length === 0) { // conta quantos itens tem dentro do array se for 0 mostra a mensagem que esta abaixo
         lista.innerHTML = '   <p class="text-center text-muted mt-5">Nenhuma nota encontrada...</p>';
     }
-
-
-    document.querySelectorAll('[data-id]').forEach((btn) => { // pega todos os elemtnos hmtl que tem o atributo "data-id", que neste caso sera o botao de excluir de cada card, percorre cada atributo "data-id" 
-        btn.addEventListener('click', () => { excluirNota(btn.dataset.id) }); //e para cada um deles adiciona um evento de click que chama a função excluirNota passando o valor do "data-id" do botao clicado, que é o id da nota que queremos excluir.
-    });
-
-
-
-    document.querySelectorAll('[data-editar]').forEach((btn) => {
-        btn.addEventListener('click', () => { editarNota(btn.dataset.editar) });
-    });
 }
 
 
@@ -173,5 +168,20 @@ btnSalvar.addEventListener('click', validar);
 btnModal.addEventListener('click', () => { //quando o btnModal for clicado sera aberto o meu modal usando a variavel aparecerModal que guarda a minha modal.
     aparecerModal.show();
 })
+
+document.getElementById('btnConfirmarExclusao').addEventListener('click',() =>{
+    if(idParaExcluir !== null){
+        let notas = carregarNotas(); //carrega as notas salvas no localStorage e guarda na variavel "notas"
+        notas = notas.filter(n => n.id.toString() !== idParaExcluir.toString());
+        salvarNotas(notas); //salva o array atualizado no localStorage
+        renderizarNotas(); //renderiza as notas atualizadas na tela, ou seja sem a nota que foi excluida.
+
+        let modalElement = document.getElementById('modalConfirmacao');
+        let modalInstancia = bootstrap.Modal.getInstance(modalElement);
+        modalInstancia.hide(); //fecha o modal de confirmação depois de excluir a nota  
+        
+        idParaExcluir = null; //limpa a variavel
+    }
+});
 
 renderizarNotas(); //chama a função renderizarNotas para exibir as notas salvas no localStorage quando a página for carregada.

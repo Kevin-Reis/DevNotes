@@ -137,6 +137,13 @@ function renderizarNotas(listaParaExibir = carregarNotas()) { // todas as minhas
 
     lista.innerHTML = ''; //limpa todos os card da tela anes de renderizar os novos para evita duplicacao toda vez q a funcao for chamada.
 
+    listaParaExibir.sort((a, b) => { // o sort  pega o itens do array de dois em dois chamando-os de A e B e faz a conta de subtracao para decidir quem tem mais peso e deve ficar na frente(la em cima), se a nota esta fixada ela ganha o peso 1 se nao estiver fixada ganha o peso 0, depois pega e faz B-A 
+        let aFixada = a.fixada ? 1 : 0;
+        let bFixada = b.fixada ? 1 : 0; //pergunta se  a nota esta fixada, se estiver passa a receber o valor 1 se nao recebe 0
+
+        return bFixada - aFixada; // aqui e a conta de subtracao,se a nota B estiver fixada e a nota A nao estiver fixada, o resultado sera 1-0 = 1, ous seja a nota b tem mais peso e deve ficar na frente, se a nota A estiver fixada e a nota B nao estiver fixada, o resultado sera 0-1 = -1, ou seja a nota A tem mais peso e deve ficar na frente, se as duas notas estiverem fixadas ou as duas nao estiverem fixadas o resultado sera 0-0 = 0 ou 1-1 = 0, ou seja as notas tem o mesmo peso e a ordem entre elas nao importa.
+    })
+
     listaParaExibir.forEach((nota) => { //percorre o meu parametro "listaParaExibir" e exibe meus objetos q se denominam como nota"
         let textoEdicao = "";
         let corHex = "#6c757d"; // cor casso de erro
@@ -151,21 +158,31 @@ function renderizarNotas(listaParaExibir = carregarNotas()) { // todas as minhas
         }
 
         let exibicaoData = "";
-        if(nota.dataEdicao){
+        if (nota.dataEdicao) {
             exibicaoData = `<p>Editado em: ${nota.dataEdicao}</p>`
-        }else{
+        } else {
             exibicaoData = `<p>criado em: ${nota.data || 'Data não disponível'}</p>`;
         }
 
+        let iconeFixar = nota.fixada ? "📌" : "📌";
+        let estiloBotaoFixar = nota.fixada ? "opacity: 1; filter: drop-shadow(0px 0px 3px rgba(0,0,0,0.3));" : "opacity: 0.3;"; //se a nota estiver fixada o botao fica com opacidade 1 e uma sombra para destacar, se nao estiver fixada o botao fica com opacidade 0.3 para parecer desativado
+
         let card = `<div class="col-md-4">
-                <div class="card shadow-sm border-roxo">
+                <div class="card shadow-sm ${nota.fixada ? 'border-warning border-2' : 'border-roxo'}">
                     <div class="card-body">
-                       <span class="badge mb-2" style="background-color: ${corHex}; color: white;">${catNome}</span>
-                        <h5 style="color: #6f42c1 !important; " class="card-title text-primary">${nota.titulo}</h5> <!--esta acesando os dados do meu array "notas" usando o parametro "nota".-->
                         
-                     
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge" style="background-color: ${corHex}; color: white;">${catNome}</span>
+                            
+                            <button class="btn btn-sm p-0 border-0" style="${estiloBotaoFixar} font-size: 1.2rem;" onclick="alterarFixarNota('${nota.id}')" title="${nota.fixada ? 'Desfixar nota' : 'Fixar nota no topo'}">
+                                ${iconeFixar}
+                            </button>
+                        </div>
+
+                        <h5 style="color: #6f42c1 !important; " class="card-title text-primary">${nota.titulo}</h5> 
+                        
                         ${exibicaoData}
-                        <p class="card-text">${nota.conteudo}</p>
+                        <p class="card-text mt-2">${nota.conteudo}</p>
                         <button class="btn btn-sm btn-outline-danger btn-vermelho" onclick="ModalExcluir('${nota.id}')">Excluir</button>
                         <button class="btn btn-sm btn-outline-danger btn-roxo" onclick="editarNota('${nota.id}')">Editar</button>
                     </div>
@@ -177,6 +194,21 @@ function renderizarNotas(listaParaExibir = carregarNotas()) { // todas as minhas
     if (listaParaExibir.length === 0) { // conta quantos itens tem dentro do array se for 0 mostra a mensagem que esta abaixo
         lista.innerHTML = '   <p class="text-center text-muted mt-5">Nenhuma nota encontrada...</p>';
     }
+}
+
+function alterarFixarNota(id) { //funcao que altera o estado da nota para fixada ou não fixada, recebe o id da nota que queremos alterar como parametro
+    let notas = carregarNotas();
+
+    notas = notas.map((nota) => {
+        if (nota.id === id) {
+            return { ...nota, fixada: !nota.fixada }; // pega tudo que esta na nota antiga e espalha aqui dentro e faz uma copia identica
+            // tem o valor iniciado como false, pq a nota nao esta fixada, ai quando o usuario clicar no botao de fixar ele vai pegar esse valor false e transformar em true, ou seja vai fixar a nota, e se o usuario clicar novamente ele vai pegar o valor true e transformar em false, ou seja vai desfixar a nota.
+        }
+        return nota; // se o id da nota for diferente do id que queremos alterar, ele retorna a nota sem alterações
+    });
+
+    salvarNotas(notas);
+    renderizarNotas();
 }
 
 
@@ -217,13 +249,13 @@ document.getElementById('btnConfirmarExclusao').addEventListener('click', () => 
 
 
 
-document.getElementById('filtroTodos').addEventListener('click',(e) =>{
-    
+document.getElementById('filtroTodos').addEventListener('click', (e) => {
+
     renderizarNotas();
 });
 
-document.getElementById('filtroPessoal').addEventListener('click', (e) =>{
-    
+document.getElementById('filtroPessoal').addEventListener('click', (e) => {
+
     let notasAtuais = carregarNotas();
     let filtradas = notasAtuais.filter(nota => (nota.categoria || 'Pessoal') === 'Pessoal');
     renderizarNotas(filtradas);
@@ -232,8 +264,8 @@ document.getElementById('filtroPessoal').addEventListener('click', (e) =>{
 
 
 
-document.getElementById('filtroTrabalho').addEventListener('click', (e) =>{
-    
+document.getElementById('filtroTrabalho').addEventListener('click', (e) => {
+
     let notasAtuais = carregarNotas();
     let filtradas = notasAtuais.filter(nota => (nota.categoria === 'Trabalho'));
     renderizarNotas(filtradas);
@@ -243,15 +275,15 @@ document.getElementById('filtroTrabalho').addEventListener('click', (e) =>{
 
 
 
-document.getElementById('filtroEstudos').addEventListener('click', (e) =>{
-   
+document.getElementById('filtroEstudos').addEventListener('click', (e) => {
+
     let notasAtuais = carregarNotas();
     let filtradas = notasAtuais.filter(nota => (nota.categoria === 'Estudos'));
     renderizarNotas(filtradas);
 });
 
 
-    
+
 
 
 renderizarNotas(); //chama a função renderizarNotas para exibir as notas salvas no localStorage quando a página for carregada.

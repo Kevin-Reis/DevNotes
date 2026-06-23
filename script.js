@@ -18,6 +18,10 @@ let idParaExcluir = null //variavel para guardar o id da nota que queremos exclu
 
 let Categoria = document.getElementById('inputCategoria')
 
+let selectOrdenacao = document.getElementById('selectOrdenacao');
+
+let categoriaAtiva = 'Todos'
+
 //Variaveis que guardam Elementos HTML pelo seu ID para serem usados depois
 
 
@@ -141,7 +145,21 @@ function renderizarNotas(listaParaExibir = carregarNotas()) { // todas as minhas
         let aFixada = a.fixada ? 1 : 0;
         let bFixada = b.fixada ? 1 : 0; //pergunta se  a nota esta fixada, se estiver passa a receber o valor 1 se nao recebe 0
 
-        return bFixada - aFixada; // aqui e a conta de subtracao,se a nota B estiver fixada e a nota A nao estiver fixada, o resultado sera 1-0 = 1, ous seja a nota b tem mais peso e deve ficar na frente, se a nota A estiver fixada e a nota B nao estiver fixada, o resultado sera 0-1 = -1, ou seja a nota A tem mais peso e deve ficar na frente, se as duas notas estiverem fixadas ou as duas nao estiverem fixadas o resultado sera 0-0 = 0 ou 1-1 = 0, ou seja as notas tem o mesmo peso e a ordem entre elas nao importa.
+        if(bFixada !== aFixada){
+            return bFixada - aFixada; // aqui e a conta de subtracao,se a nota B estiver fixada e a nota A nao estiver fixada, o resultado sera 1-0 = 1, ous seja a nota b tem mais peso e deve ficar na frente, se a nota A estiver fixada e a nota B nao estiver fixada, o resultado sera 0-1 = -1, ou seja a nota A tem mais peso e deve ficar na frente, se as duas notas estiverem fixadas ou as duas nao estiverem fixadas o resultado sera 0-0 = 0 ou 1-1 = 0, ou seja as notas tem o mesmo peso e a ordem entre elas nao importa.
+        }
+
+        let criterio = selectOrdenacao ? selectOrdenacao.value : 'recentes'; //o elemetno selectOrdenacao tem na tela? se sim, pegue o valor dele por exemplo o 'alfabetica', se ele nao existir usar o 'recentes como padrao, apos isso a cariavel criterio guarda a palavra exata do que o usuario quer fazer'
+
+        if(criterio === 'alfabetica'){
+            return a.titulo.localeCompare(b.titulo);// o localeCompare compara os titulos das notas e decide a ordem alfabetica, se o titulo de A vier antes do titulo de B na ordem alfabetica ele retorna um numero negativo, se o titulo de A vier depois do titulo de B na ordem alfabetica ele retorna um numero positivo, se os titulos forem iguais ele retorna 0
+
+        }else if(criterio === 'antigas'){
+            return a.id - b.id; // esta comparando as datas quie os ids foram criados para saber qual fica na frente ou atras, se  por exempolo de a tem a id 1000 e a b tiver o id 2000, vai fazer 1000-2000 = -1000, ou seja a nota A deve ficar na frente
+        }else{
+            return b.id - a.id; // esta comparando as datas que os ids foram criados para saber qual fica na frente ou atras, se  por exemplo A tem a id 1000 e a B tiver o id 2000, vai fazer 2000-1000 = 1000, ou seja a nota B deve ficar na frente
+        }
+
     })
 
     listaParaExibir.forEach((nota) => { //percorre o meu parametro "listaParaExibir" e exibe meus objetos q se denominam como nota"
@@ -196,6 +214,23 @@ function renderizarNotas(listaParaExibir = carregarNotas()) { // todas as minhas
     }
 }
 
+function aplicarFiltros(){
+    let notasAtuais = carregarNotas();
+    let termo = inputBusca.value.toLowerCase();
+
+    let notasFiltradas = notasAtuais.filter(nota =>{
+        let catNota = nota.categoria || 'pessoal'; //pega a categoria da nota, se a nota nao tiver uma categoria definida, ele usa "Pessoal" como valor padrão, isso evita que as notas sem categoria sejam excluidas do filtro quando o usuario selecionar uma categoria especifica.
+
+        let bateCategoria = categoriaAtiva === 'Todos' || (catNota === categoriaAtiva); // se a categoriaAtiva for "Todos", bateCategoria recebe true para todas as notas, ou seja todas as notas passam no filtro de categoria, se a categoriaAtiva for diferente de "Todos", bateCategoria recebe true apenas para as notas que tem a categoria igual a categoriaAtiva, ou seja apenas as notas da categoria selecionada passam no filtro de categoria.
+
+        let bateTexto = nota.titulo.toLowerCase().includes(termo) || nota.conteudo.toLowerCase().includes(termo); // o testo que o usuario digitou na barra de pesquisa existe dentro do titulo ou do conteudo
+
+        return bateCategoria && bateTexto; //para a nota ser exibida na tela se a categoria dela for correta e o texto dela bater com a busca, as duas condicoes precisam ser verdadeiras se nao ira dar erro.
+    });
+
+    renderizarNotas(notasFiltradas);
+}
+
 function alterarFixarNota(id) { //funcao que altera o estado da nota para fixada ou não fixada, recebe o id da nota que queremos alterar como parametro
     let notas = carregarNotas();
 
@@ -212,17 +247,7 @@ function alterarFixarNota(id) { //funcao que altera o estado da nota para fixada
 }
 
 
-inputBusca.addEventListener('input', () => {
-    let termo = inputBusca.value.toLowerCase();
-    let notasAtuais = carregarNotas();
-
-    let notasFiltradas = notasAtuais.filter(item => {
-        // Usei "item" aqui para não confundir com outras variáveis
-        return item.titulo.toLowerCase().includes(termo) || item.conteudo.toLowerCase().includes(termo); // me returna a pesquisa com o que esta escrito no titulo da nota ou o conteudo da nota, ele pergunta, o seu titulo tem incluso nele oq o usuario(termo) digitou.
-    });
-
-    renderizarNotas(notasFiltradas);
-});
+inputBusca.addEventListener('input', aplicarFiltros);
 
 
 
@@ -230,6 +255,10 @@ btnSalvar.addEventListener('click', validar);
 
 btnModal.addEventListener('click', () => { //quando o btnModal for clicado sera aberto o meu modal usando a variavel aparecerModal que guarda a minha modal.
     aparecerModal.show();
+})
+
+selectOrdenacao.addEventListener('change',()=>{
+    renderizarNotas();
 })
 
 document.getElementById('btnConfirmarExclusao').addEventListener('click', () => {
@@ -249,16 +278,15 @@ document.getElementById('btnConfirmarExclusao').addEventListener('click', () => 
 
 
 
-document.getElementById('filtroTodos').addEventListener('click', (e) => {
-
-    renderizarNotas();
+document.getElementById('filtroTodos').addEventListener('click', () => {
+    categoriaAtiva = 'Todos';
+    aplicarFiltros();
 });
 
-document.getElementById('filtroPessoal').addEventListener('click', (e) => {
+document.getElementById('filtroPessoal').addEventListener('click', () => {
 
-    let notasAtuais = carregarNotas();
-    let filtradas = notasAtuais.filter(nota => (nota.categoria || 'Pessoal') === 'Pessoal');
-    renderizarNotas(filtradas);
+    categoriaAtiva = 'Pessoal';
+    aplicarFiltros();
 })
 
 
@@ -266,20 +294,15 @@ document.getElementById('filtroPessoal').addEventListener('click', (e) => {
 
 document.getElementById('filtroTrabalho').addEventListener('click', (e) => {
 
-    let notasAtuais = carregarNotas();
-    let filtradas = notasAtuais.filter(nota => (nota.categoria === 'Trabalho'));
-    renderizarNotas(filtradas);
+    categoriaAtiva = 'Trabalho';
+    aplicarFiltros();
 });
 
 
 
-
-
 document.getElementById('filtroEstudos').addEventListener('click', (e) => {
-
-    let notasAtuais = carregarNotas();
-    let filtradas = notasAtuais.filter(nota => (nota.categoria === 'Estudos'));
-    renderizarNotas(filtradas);
+    categoriaAtiva = 'Estudos'; // atualiza a categoriaAtiva para "Estudos" quando o botão de filtro de estudos for clicado, isso indica que queremos filtrar as notas para mostrar apenas as notas da categoria "Estudos"
+    aplicarFiltros(); //chama a função aplicarFiltros para atualizar a lista de notas exibida na tela de acordo com a categoriaAtiva atualizada, ou seja para mostrar apenas as notas da categoria "Estudos"
 });
 
 

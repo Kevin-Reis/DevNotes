@@ -15,26 +15,46 @@
 
     <nav class="navbar shadow-sm mb-5">
         <div class="container">
-            <span class="navbar-brand fw-bold" style="color: var(--roxo);">DevNotes</span>
+            <span class="navbar-brand fw-bold">DevNotes</span>
+            
+            <a class="btn-roxo" href="Cadastro.html">
+                <span style="font-family: Arial, Helvetica, sans-serif;">Conecte-se</span>
+
+            </a>
+            
         </div>
     </nav>
 
-    <p>Você tem <span id="contador-notas">0</span> nota(s)</p>
-    <div class="inputPesquisa d-flex justify-content-center ">
-        <input style="border: solid 0.2rem #6f42c1; padding: 0.3rem;" type="text" id="inputBusca">
+    <div class="d-flex justify-content-center m-3">
+        <p>Você tem <span id="contador-notas">0</span> nota(s)</p>
 
-        <div class="btn-group">
+    </div>
+
+    
+    <div class="d-flex justify-content-center m-3">
+
+        <input class="inputPesquisa" type="text" id="inputBusca">
+
+    </div>
+
+    <div class="d-flex justify-content-center ">
+        <select id="selectOrdenacao" class="form-select" style="width: auto; border: solid 0.2rem #6f42c1;">
+            <option value="recentes">Mais recentes</option>
+            <option value="antigas">Mais antigas</option>
+            <option value="alfabetica">Ordem Alfabética (A-Z)</option>
+        </select>
+
+    </div>
+    
+    <div class=" d-flex justify-content-center m-3">
+
+        <div class="filtro">
             <button class="btn-roxo" id="filtroTodos">Todos</button>
             <button class="btn-roxo" id="filtroPessoal">Pessoal</button>
             <button class="btn-roxo" id="filtroTrabalho">Trabalho</button>
             <button class="btn-roxo" id="filtroEstudos">Estudos</button>
         </div>
 
-        <select id="selectOrdenacao" class="form-select" style="width: auto; border: solid 0.2rem #6f42c1;">
-                <option value="recentes">Mais recentes</option>
-                <option value="antigas">Mais antigas</option>
-                <option value="alfabetica">Ordem Alfabética (A-Z)</option>
-        </select>
     </div>
     
 
@@ -67,7 +87,7 @@
         +
     </button>
 
-    <div class="modal" id="blocoNotas" tabindex="-1">
+    <div class="modal fade" id="blocoNotas" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -110,7 +130,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script src="js/script.js" ></script>
 </body>
 
 </html>

@@ -1,4 +1,11 @@
-.bg-purple-badge{
+.link {
+    color: #6f42c1;
+    text-decoration: none;
+}
+
+
+
+.bg-purple-badge {
     background-color: #6f42c1 !important;
     color: white !important;
 }
@@ -10,11 +17,14 @@
     transition: all 0.3s ease-in-out !important;
     border-radius: 5px !important;
     padding: 0.4rem;
+    text-decoration: none;
 }
+
 .btn-roxo:hover {
     background-color: #5a32a3 !important;
     color: white !important;
     transform: scale(1.05) !important;
+
 }
 
 .btn-vermelho {
@@ -42,14 +52,9 @@
     border: 1px solid #ced4da;
     border-radius: 5px;
 }
+
 .inputsNotas:hover {
     border: 1px solid #6f42c1;
-}
-
-
-
-body {
-    background-color: #f8f9fa;
 }
 
 .navbar {
@@ -75,10 +80,10 @@ body {
 }
 
 .border-roxo {
-    border: 0.2rem solid #6f42c1  !important;
+    border: 0.2rem solid #6f42c1 !important;
 }
 
-/* Estilo dos Cards das Notas */
+
 .nota-card {
     border: none;
     border-radius: 12px;
@@ -92,6 +97,43 @@ body {
 }
 
 .btn-editar {
-   
+
     background-color: purple !important;
+}
+
+.inputPesquisa{
+    border: solid 0.2rem #6f42c1;
+    padding: 0.3rem;
+    width: 18rem;
+    
+}
+
+.formulario{
+   
+    width: 30rem;
+    height: 30rem;
+    background-color: white;
+    border-radius: 0.5rem;
+}
+
+.tituloCad{
+    width: 100%;
+    height: auto;
+    background-color: #5a32a3;
+    padding: 0.5rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+   
+}
+
+.inputs{
+    width: 25rem;
+    padding: 2rem;
+
+}
+
+.inputsForm{
+    border-radius: 0.5rem;
+    border: solid 0.2rem #6f42c1;
+    padding: 0.3rem;
 }

@@ -1,14 +1,32 @@
-.link {
-    color: #6f42c1;
-    text-decoration: none;
+.navbar {
+    background-color: white;
+    border-bottom: 3px solid  #6f42c1;
 }
 
-
-
-.bg-purple-badge {
-    background-color: #6f42c1 !important;
-    color: white !important;
+.nota-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    background-color: white;
 }
+
+/* Estilo do Botão Flutuante */
+.btn-flutuante {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background-color: #6f42c1;
+    color: white;
+    border: none;
+    font-size: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1000;
+}
+
 
 .btn-roxo {
     background-color: #6f42c1 !important;
@@ -42,8 +60,6 @@
     transform: scale(1.05) !important;
 }
 
-
-
 .inputsNotas {
 
     width: 100%;
@@ -53,53 +69,21 @@
     border-radius: 5px;
 }
 
-.inputsNotas:hover {
-    border: 1px solid #6f42c1;
-}
 
-.navbar {
-    background-color: white;
-    border-bottom: 3px solid var(--roxo);
-}
-
-/* Estilo do Botão Flutuante */
-.btn-flutuante {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
-    background-color: var(--roxo);
-    color: white;
-    border: none;
-    font-size: 30px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    z-index: 1000;
-}
-
-.border-roxo {
-    border: 0.2rem solid #6f42c1 !important;
+.link {
+    color: #6f42c1;
+    text-decoration: none;
 }
 
 
-.nota-card {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    background-color: white;
-}
+
+
 
 .card-title {
-    color: var(--roxo);
+    color: #6f42c1;
     font-weight: bold;
 }
 
-.btn-editar {
-
-    background-color: purple !important;
-}
 
 .inputPesquisa{
     border: solid 0.2rem #6f42c1;

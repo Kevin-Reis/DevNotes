@@ -1,3 +1,9 @@
+let usuarioLogado = JSON.parse(localStorage.getItem('usuario')); //pega a chave "usuario" do localStorage e busca oq esta salvo nele e retorna uma string, o "JSON.parse" converte essa string de volta a objeto para conseguir acessar oq esta salvo nele no caso seuas propriedades.
+let nomeLogado = document.getElementById('nomeLogado');
+
+let btnConectar = document.getElementById('btn-conectar')
+let btnSair = document.getElementById('btn-logout')
+
 let minhasNotas = carregarNotas()
 let aparecerModal = new bootstrap.Modal(document.getElementById('blocoNotas')); //varaivel que guarda a minha modal
 
@@ -6,6 +12,8 @@ let btnModal = document.getElementById('btn-abrir');
 let btnSalvar = document.getElementById('btn-salvar');
 let titulo = document.getElementById('inputTitulo');
 let conteudo = document.getElementById('inputConteudo');
+let contadorTitulo = document.getElementById('contadorTitulo');
+let contadorConteudo = document.getElementById('contadorConteudo');
 let lista = document.getElementById('lista-notas');
 
 let erroTitulo = document.getElementById('erroTitulo');
@@ -23,6 +31,19 @@ let selectOrdenacao = document.getElementById('selectOrdenacao');
 let categoriaAtiva = 'Todos'
 
 //Variaveis que guardam Elementos HTML pelo seu ID para serem usados depois
+
+let logado = localStorage.getItem('logado')
+
+if(!logado){
+    window.location.href = 'login.html'
+}
+
+if(logado){
+    btnConectar.style.display = 'none'
+    nomeLogado.textContent = 'OLA, ' + usuarioLogado.nome + '!' ;
+}
+
+
 
 
 
@@ -182,7 +203,7 @@ function renderizarNotas(listaParaExibir = carregarNotas()) { // todas as minhas
             exibicaoData = `<p>criado em: ${nota.data || 'Data não disponível'}</p>`;
         }
 
-        let iconeFixar = nota.fixada ? "📌" : "📌";
+        let iconeFixar = nota.fixada ? "DESFIXAR" : "FIXAR";
         let estiloBotaoFixar = nota.fixada ? "opacity: 1; filter: drop-shadow(0px 0px 3px rgba(0,0,0,0.3));" : "opacity: 0.3;"; //se a nota estiver fixada o botao fica com opacidade 1 e uma sombra para destacar, se nao estiver fixada o botao fica com opacidade 0.3 para parecer desativado
 
         let card = `<div class="col-md-4">
@@ -246,6 +267,14 @@ function alterarFixarNota(id) { //funcao que altera o estado da nota para fixada
     renderizarNotas();
 }
 
+btnSair.addEventListener('click', () => {
+    localStorage.removeItem('logado');
+    nomeLogado.textContent = '';
+    btnSair.style.display = 'none';
+    window.location.href = 'login.html';
+
+}); // botao de logout, remove meu objeto "usuario", e o textContent atualizar meu span pra nao mostrar nada de texto, o display.style serve para esconder o botao para ele sumir da tela quando o usuario clicar no botao de logout, e assim q o logout for realizado o usuario sera jogado para a pagina de login
+
 
 inputBusca.addEventListener('input', aplicarFiltros);
 
@@ -304,6 +333,15 @@ document.getElementById('filtroEstudos').addEventListener('click', (e) => {
     categoriaAtiva = 'Estudos'; // atualiza a categoriaAtiva para "Estudos" quando o botão de filtro de estudos for clicado, isso indica que queremos filtrar as notas para mostrar apenas as notas da categoria "Estudos"
     aplicarFiltros(); //chama a função aplicarFiltros para atualizar a lista de notas exibida na tela de acordo com a categoriaAtiva atualizada, ou seja para mostrar apenas as notas da categoria "Estudos"
 });
+
+inputTitulo.addEventListener('input', () => {
+    contadorTitulo.textContent = titulo.value.length + " caracteres"; // o evento input é disparado toda vez que o usuario digita algo no campo titulo, ele pega o valor COM O "length" do campo titulo e conta quantos caracteres tem e atualiza o contador de caracteres com o "textContent"
+});
+
+inputConteudo.addEventListener('input', () => {
+    contadorConteudo.textContent = conteudo.value.length + " caracteres"; //atualiza o contador de caracteres do campo conteudo a cada vez que o usuario digitar algo no campo conteudo, ele pega o valor do campo conteudo e conta quantos caracteres tem e atualiza o contador de caracteresS
+});
+
 
 
 
